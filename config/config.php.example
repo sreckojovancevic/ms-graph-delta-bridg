@@ -1,0 +1,39 @@
+<?php
+/**
+ * MS-Graph-Delta-Bridge Configuration Example
+ * Rename this file to 'config.php' and fill in your credentials.
+ * DO NOT commit your actual 'config.php' to GitHub!
+ */
+
+return [
+    // Microsoft Azure App Registration Details
+    'azure' => [
+        'client_id'     => 'YOUR_AZURE_CLIENT_ID',
+        'client_secret' => 'YOUR_AZURE_CLIENT_SECRET',
+        'tenant_id'     => 'common', // ili tvoj specifični Tenant ID
+        'redirect_uri'  => 'http://localhost/callback.php',
+    ],
+
+    // Lokalna baza podataka gde Bridge pamti Delta tokene i stanje
+    'database' => [
+        'driver'   => 'mysql',
+        'host'     => '127.0.0.1',
+        'database' => 'graph_bridge_db',
+        'username' => 'db_user',
+        'password' => 'db_password',
+        'charset'  => 'utf8mb4',
+    ],
+
+    // Podešavanja za tvoj Admin Panel monitoring
+    'monitoring' => [
+        'enabled'      => true,
+        'auth_token'   => 'generate-a-secure-token-here', // Token za pristup /admin/status
+        'log_path'     => __DIR__ . '/../logs/sync.log',
+    ],
+
+    // Delta Sync specifičnosti
+    'sync_settings' => [
+        'batch_size'   => 200, // Koliko itema vučemo u jednom prolazu
+        'retry_limit'  => 3,
+    ]
+];
