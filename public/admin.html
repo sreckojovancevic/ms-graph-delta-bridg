@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MS-Graph-Bridge Admin Panel</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: sans-serif; background: #1a1a1a; color: #eee; padding: 20px; }
+        .card { background: #2d2d2d; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+        .stat-box { background: #3d3d3d; padding: 15px; border-radius: 5px; text-align: center; }
+        .stat-value { font-size: 24px; font-weight: bold; color: #00ffcc; }
+        canvas { max-height: 300px; }
+    </style>
+</head>
+<body>
+    <h1>🚀 MS-Graph-Bridge Monitor</h1>
+    
+    <div class="stats-grid">
+        <div class="stat-box">
+            <div>Active Processes</div>
+            <div id="proc-val" class="stat-value">--</div>
+        </div>
+        <div class="stat-box">
+            <div>RAM Usage</div>
+            <div id="ram-val" class="stat-value">--</div>
+        </div>
+        <div class="stat-box">
+            <div>Server Uptime</div>
+            <div id="uptime-val" style="font-size: 14px; margin-top: 10px;">--</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>System Load History (Last 15 checks)</h3>
+        <canvas id="loadChart"></canvas>
+    </div>
+
+    <script>
+        async function updateStats() {
+            try {
+                const response = await fetch('/v1.0/admin/status');
+                const data = await response.json();
+                
+                document.getElementById('proc-val').innerText = data.current.active_processes;
+                document.getElementById('ram-val').innerText = data.current.ram_usage_mb + ' MB';
+                document.getElementById('uptime-val').innerText = data.uptime;
+
+                // Update Chart
+                const labels = data.history.map(h => h.timestamp.split(' ')[1]).reverse();
+                const ramData = data.history.map(h => h.ram_usage_mb).reverse();
+
+                loadChart.data.labels = labels;
+                loadChart.data.datasets[0].data = ramData;
+                loadChart.update();
+            } catch (e) { console.error("Bridge is offline"); }
+        }
+
+        const ctx = document.getElementById('loadChart').getContext('2d');
+        const loadChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'RAM Usage (MB)',
+                    data: [],
+                    borderColor: '#00ffcc',
+                    tension: 0.3,
+                    fill: true,
+                    backgroundColor: 'rgba(0, 255, 204, 0.1)'
+                }]
+            },
+            options: { responsive: true, scales: { y: { beginAtZero: false } } }
+        });
+
+        setInterval(updateStats, 5000); // Osvežavaj svakih 5 sekundi
+        updateStats();
+    </script>
+</body>
+</html>
