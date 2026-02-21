@@ -93,9 +93,3 @@ MIT License - Feel free to use, modify, and share!
 
 ---
 
-### Šta dalje?
-Sada kada imaš "izlog" (README), svako ko uđe na tvoj GitHub profil će odmah shvatiti da je ovo ozbiljna stvar. 
-
-**Hoćeš li da sada pređemo na kucanje `src/DriveModuleDelta.php`?** To je onaj deo gde tvoja magija sa mrežama pretvara Microsoftov JSON u podatke koje tvoja baza razume. Možemo ga napraviti tako da bude "bulletproof". Reci kad si spreman!
-
-```
